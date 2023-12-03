@@ -1,18 +1,27 @@
-// create my map
+////////////////////////////
+////// CREATE THE MAP //////
+////////////////////////////
 
 let myMap = L.map("map", {
     center: [37.09, -95.71],
     zoom: 4
   });
-  
-  // Adding a tile layer (the background map image) to our map:
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+////////////////////////////
+////// DEFAULT LAYER ///////
+////////////////////////////
+
+// Adding a tile layer (the background map image) to our map:
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(myMap);
 
 
 
+///////////////////////////////////////
+/////// EXTRACT EARTHQUAKE DATA ///////
+///////////////////////////////////////
 
 // extract info from geojson using d3
 
@@ -37,13 +46,14 @@ d3.json(url).then(function(data){
 
         if (eqMarker) {
             // create the circles using the json coordinates
+            // create properties of each circle as well
             L.circle([eqMarker.coordinates[1], eqMarker.coordinates[0]], {
                 stroke: true, // outline of the circles
                 weight: 0.5, // thickness of the circles
                 fillOpacity: 0.75,
                 color: 'black', // colour of the outline
                 fillColor: circleColours(eqMarker.coordinates[2]), 
-                radius: eqProperties.mag*10000
+                radius: eqProperties.mag*50000
        
             }
             // pop up event information
@@ -51,27 +61,67 @@ d3.json(url).then(function(data){
         Event Date: ${new Date(eqProperties.time)}<p>
         Magnitude: ${eqProperties.mag}<p>
         Depth: ${eqMarker.coordinates[2]}km<p>`)
-        .addTo(myMap);
+        .addTo(myMap); // add all this to the map
 
         }
 
-    }
+    };
 
-    // legend
+
+    // colours I needed for depth
+    function circleColours(depth){
+
+        // create empty color
+        var color = "";
+
+        if (depth >= -10 && depth <= 10) {
+            return color = '#A3F600';
+        }
+
+        else if (depth > 10 && depth <= 30){
+            return color = '#DCF400';
+        }
+
+        else if (depth > 30 && depth <= 50){
+            return color = '#F7DB11';
+        }
+
+        else if (depth > 50 && depth <= 70) {
+            return color = '#FDB72A';
+        }
+
+        else if (depth > 70 && depth <= 90) {
+            return color = '#FCA35D';
+        }
+
+        else {
+            return color = '#FF5F65';
+        }
+
+    };
+    ///////////////////////////////
+    /////// CREATE LEGEND /////////
+    ///////////////////////////////
+
+
     // set legend bottom right
     let legend = L.control({ position: "bottomright"});
 
     legend.onAdd = function () {
-      let div = L.DomUtil.create("div", "info legend");
+
+    // The method creates a new HTML element with the specified tag name and optional class names
+        let div = L.DomUtil.create("div", "info legend");
       
-      let colors = ["#98ee00", "#d4ee00", "#eecc00", "#ee9c00", "#ea822c", "#ea2c2c"]
-      let depthRange = [-10, 10, 30, 50, 70, 90];
+        let colors = ["#98ee00", "#d4ee00", "#eecc00", "#ee9c00", "#ea822c", "#ea2c2c"]
+        let depthRange = [-10, 10, 30, 50, 70, 90];
+
+        div.innerHTML = "<h4>Depth of Quake<br> (km)</h4>";
     
-      //loop through each range and create label with color
-      for (let i = 0; i < depthRange.length; i++) {
-        div.innerHTML += 
-        "<i style='background: " + colors[i] + " '></i>"  + 
-        depthRange[i] + (depthRange[i + 1] ? "&ndash;" + depthRange[i + 1] + "<br>" : "+");
+        //loop through each range and create label with color
+        for (let i = 0; i < depthRange.length; i++) {
+            div.innerHTML += 
+            "<i style='background: " + colors[i] + " '></i>"  + 
+            depthRange[i] + (depthRange[i + 1] ? "&ndash;" + depthRange[i + 1] + "<br>" : "+");
       }
         return div;
     };
@@ -82,34 +132,4 @@ d3.json(url).then(function(data){
 });
 
 
-function circleColours(depth){
-
-    // create empty color
-    var color = "";
-
-    if (depth >= -10 && depth <= 10) {
-        return color = '#A3F600';
-    }
-
-    else if (depth > 10 && depth <= 30){
-        return color = '#DCF400';
-    }
-
-    else if (depth > 30 && depth <= 50){
-        return color = '#F7DB11';
-    }
-
-    else if (depth > 50 && depth <= 70) {
-        return color = '#FDB72A';
-    }
-
-    else if (depth > 70 && depth <= 90) {
-        return color = '#FCA35D';
-    }
-
-    else {
-        return color = '#FF5F65';
-    }
-
-}
 
