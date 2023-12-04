@@ -1,6 +1,10 @@
 # leaflet-challenge
 This is my bootcamp Module 15 Assignment, Leaflet Challenge
 
+Leaflet Part 1 contains code that creates earthquake data from the last 7 days. It contains circle events with popup features that state the location, date, and magnitude.
+
+Optionally, I also did Leaflet Part 2 which contains code of the plates with satellite layer as well as the aforementioned part 1 included as well i.e.) it has all the earthquake data from the past week.
+
 JavaScript mapping with Leaflet and D3
   <div class="description user_content "><div id="bootcamp">
 <img style="display: none;" src="https://static.bc-edx.com/data/dl-1-2/m15/lms/img/banner.jpg" alt="lesson banner">
